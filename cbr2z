@@ -67,7 +67,7 @@ CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
 
 CBRSCANNER=`find -iwholename '*/z*.jpg' 2>/dev/null`
 [[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits"
-rm $CBRSCANNER 2>/dev/null || echo "--> To many files matched!"
+rm $CBRSCANNER 2>/dev/null || echo "---> To many files matched!"
 
 # Put all the extracted files into new ".cbz" file
 echo "-> Compressing"
