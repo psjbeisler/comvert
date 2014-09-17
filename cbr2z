@@ -62,7 +62,7 @@ cd "$BASENAME"
 chmod 777 -R ./*
 
 # Remove unwanted files
-CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
+CBRTHUMBS=`find '*/Thumbs.db' 2>/dev/null`
 [[ ! -z "$CBRTHUMBS" ]] && rm $CBRTHUMBS && echo "--> Trashed Thumbs.db"
 
 CBRSCANNER=`find -iwholename '*/z*.jpg' 2>/dev/null`
