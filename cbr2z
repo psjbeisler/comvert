@@ -84,9 +84,6 @@ rm -r "$BASENAME"
 # Delete the RAR file also
 rm "$CBRFILE"
 
-# Delete the RAR file also
-rm "$CBRFILE"
-
 done
 
 # At the end we cleanup by removing the temp folder from ram disk
