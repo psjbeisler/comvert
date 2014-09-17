@@ -8,7 +8,7 @@ Requires:
 
 - Works from current directory
 - Removes Thumbs.db from archive, if found
-- Removes Scan credit pages, if found
+- Removes Scan credit pages, if found and possible
 - Comments left in from original (unknown) source to be easily forked/modified
 
 <a href="http://imgur.com/XfMLch4"><img src="http://i.imgur.com/XfMLch4l.png" title="Hosted by imgur.com"/></a>
