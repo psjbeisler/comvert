@@ -1,22 +1,19 @@
 #!/bin/bash
-
-clear
-echo
-echo "Converting CBRs to CBZs"
-
-# Set the "field separator" to something other than spaces/newlines" so that spaces
-# in the file names don't mess things up. I'm using the pipe symbol ("|") as it is very
-# unlikely to appear in a file name.
-IFS="|"
-
-# Set name for the temp dir. This directory will be created under SOURCEDIR
-TEMPDIR=".r2z_tmp"
-
 # The script should be invoked as "cbr2cbz {directory}", where "{directory}" is the
 # top-level directory to be searched. Just to be paranoid, if no directory is specified,
 # then default to the current working directory ("."). Let's put the name of the
 # directory into a shell variable called SOURCEDIR.
 # Note: "$1" = "The first command line argument"
+
+clear
+echo
+echo "Converting CBRs to CBZs"
+
+IFS="|"
+
+# This directory will be created under SOURCEDIR
+TEMPDIR=".r2z_tmp"
+
 if test -z "$1"; then
         SOURCEDIR=`pwd`
 else
@@ -26,31 +23,20 @@ fi
 echo
 echo "+ Working from directory $SOURCEDIR"
 
-# We need an empty directory to work in, so we'll create a temp directory here
-# and step into it
 cd "$SOURCEDIR"
 mkdir "$TEMPDIR"
 cd "$TEMPDIR"
 
-# Now, execute a loop, based on a "find" command in the specified directory. The
-# "-printf "$p|" will cause the file names to be separated by the pipe symbol, rather than
-# the default newline. Note the backtics ("`") (the key above the tab key on US
-# keyboards).
 find "$SOURCEDIR" -name "*.cbr" | while read CBRFILE; do
 
-# Now for the actual work. First, extract the base file name (without the extension)
-# using the "basename" command. Warning: more backtics.
 BASENAME=`basename $CBRFILE ".cbr"`
 
-# And the directory path for that file, so we know where to put the finished ".cbz"
-# file.
+# And the directory path for the finished ".cbz" file.
 DIRNAME=`dirname $CBRFILE`
 
 # Now, build the "new" file name,
 NEWNAME="$BASENAME.cbz"
 
-# We use RAR file's name to create folder for unpacked files
-# and unpack the rar file into it
 echo
 echo "> Processing: $BASENAME"
 mkdir "$BASENAME"
@@ -69,25 +55,19 @@ CBRSCANNER=`find -iwholename '*/z*.jpg' 2>/dev/null`
 [[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits"
 rm $CBRSCANNER 2>/dev/null || echo "---> To many files matched!"
 
-# Put all the extracted files into new ".cbz" file
 echo "-> Compressing"
 7z a -tzip -mx=9 "$NEWNAME" * > /dev/null
 
 # And move it to the directory where we found the original ".cbr" file
 mv "$NEWNAME" "$DIRNAME"
 
-# Finally, "cd" back to the original working directory, and delete the temp directory
-# created earlier.
 echo "--> Cleaning up"
 cd ..
 rm -r "$BASENAME"
-
-# Delete the RAR file also
 rm "$CBRFILE"
 
 done
 
-# At the end we cleanup by removing the temp folder from ram disk
 cd ..
 rm -r "$TEMPDIR"
 echo
