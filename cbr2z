@@ -13,6 +13,7 @@ IFS="|"
 
 # This directory will be created under SOURCEDIR
 TEMPDIR=".r2z_tmp"
+[[ -d "$TEMPDIR" ]] && rm -rf $TEMPDIR
 
 if test -z "$1"; then
         SOURCEDIR=`pwd`
