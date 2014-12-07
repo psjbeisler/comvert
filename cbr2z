@@ -52,9 +52,11 @@ chmod 777 -R ./*
 CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
 [[ ! -z "$CBRTHUMBS" ]] && rm $CBRTHUMBS && echo "--> Trashed Thumbs.db"
 
+CBRSTORE=`find */.DS_Store 2>/dev/null`
+[[ ! -z "$CBRSTORE" ]] && rm $CBRSTORE && echo "--> Trashed .DS_Store"
+
 CBRSCANNER=`find -iwholename '*/z*.jpg' 2>/dev/null`
-[[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits"
-rm $CBRSCANNER 2>/dev/null || echo "---> To many files matched!"
+[[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits" && rm $CBRSCANNER 2>/dev/null || echo "---> To many files matched!"
 
 echo "-> Compressing"
 7z a -tzip -mx=9 "$NEWNAME" * > /dev/null
