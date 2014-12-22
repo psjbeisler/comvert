@@ -6,6 +6,10 @@
 # Note: "$1" = "The first command line argument"
 
 clear
+# Log STOUT to file
+[[ -f "comic.log" ]] && rm "comic.log"
+exec > >(tee comic.log)
+
 echo
 echo "Converting CBRs to CBZs"
 
@@ -75,3 +79,10 @@ cd ..
 rm -r "$TEMPDIR"
 echo
 echo "=> Conversion Done"
+
+echo
+CBDID=$(cat comic.log |grep -c -i "Processing")
+CBFND=$(cat comic.log |grep -c -i "Found scan credits")
+echo "+ Processed $CBDID files"
+echo "+ Found $CBFND scan credits"
+echo
