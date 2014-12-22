@@ -53,14 +53,14 @@ cd "$BASENAME"
 chmod 777 -R ./*
 
 # Remove unwanted files
+CBRSCANNER=`find -type f -iname 'z*.*' 2>/dev/null`
+[[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits" && rm $CBRSCANNER || echo "--> No matches found"
+
 CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
 [[ ! -z "$CBRTHUMBS" ]] && rm $CBRTHUMBS && echo "--> Trashed Thumbs.db"
 
 CBRSTORE=`find */.DS_Store 2>/dev/null`
 [[ ! -z "$CBRSTORE" ]] && rm $CBRSTORE && echo "--> Trashed .DS_Store"
-
-CBRSCANNER=`find -type f -iname 'z*.*' 2>/dev/null`
-[[ ! -z "$CBRSCANNER" ]] && echo "--> Found scan credits" && rm $CBRSCANNER
 
 echo "-> Compressing"
 7z a -tzip -mx=9 "$NEWNAME" * > /dev/null
@@ -83,6 +83,10 @@ echo "=> Conversion Done"
 echo
 CBDID=$(cat comic.log |grep -c -i "Processing")
 CBFND=$(cat comic.log |grep -c -i "Found scan credits")
-echo "+ Processed $CBDID files"
-echo "+ Found $CBFND scan credits"
+CBNOT=$(cat comic.log |grep -c -i "No matches found")
+CBMSD=$(cat comic.log |grep -B 2 -i "No matches found" |grep "Processing" |cut -c 15-$NF)
+[[ ! -z "$CBMSD" ]] && echo $CBMSD > missed_files.log
+echo "+ $CBDID files processed"
+echo "+ $CBFND scan credits found"
+echo "+ $CBNOT missed files logged"
 echo
