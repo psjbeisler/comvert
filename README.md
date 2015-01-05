@@ -7,7 +7,6 @@ Requires:
 7-Zip - http://www.7-zip.org/
 
 ( Must be in the desired working directory before running. )
-^ fixing this ^
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
