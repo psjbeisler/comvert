@@ -1,45 +1,38 @@
 #!/bin/bash
-# The script should be invoked as "cbr2cbz {directory}", where "{directory}" is the
-# top-level directory to be searched. Just to be paranoid, if no directory is specified,
-# then default to the current working directory ("."). Let's put the name of the
-# directory into a shell variable called SOURCEDIR.
-# Note: "$1" = "The first command line argument"
 
-clear
+SOURCEDIR=`pwd`
+IFS="|"
+TEMPDIR=".r2z_tmp"
+
+case $1 in
+
+    -z|--zip)
+        CBFORMAT=".cbz"
+    ;;
+    -t|--tar)
+        CBFORMAT=".cbt"
+    ;;
+    *)
+        CBFORMAT=".cbr"
+    ;;
+
+esac
+
 # Log STOUT to file
 [[ -f "comic.log" ]] && rm "comic.log"
 exec > >(tee comic.log)
 
-echo
-echo "Converting CBRs to CBZs"
-
-IFS="|"
-
-# This directory will be created under SOURCEDIR
-TEMPDIR=".r2z_tmp"
-[[ -d "$TEMPDIR" ]] && rm -rf $TEMPDIR
-
-if test -z "$1"; then
-        SOURCEDIR=`pwd`
-else
-        SOURCEDIR="$1"
-fi
-
+clear
 echo
 echo "+ Working from directory $SOURCEDIR"
 
 cd "$SOURCEDIR"
-mkdir "$TEMPDIR"
-cd "$TEMPDIR"
+[[ -d "$TEMPDIR" ]] && rm -rf $TEMPDIR
+mkdir "$TEMPDIR" && cd "$TEMPDIR"
 
-find "$SOURCEDIR" -name "*.cbr" | while read CBRFILE; do
-
-BASENAME=`basename $CBRFILE ".cbr"`
-
-# And the directory path for the finished ".cbz" file.
+find "$SOURCEDIR" -name "*$CBFORMAT" | while read CBRFILE; do
+BASENAME=`basename $CBRFILE $CBFORMAT`
 DIRNAME=`dirname $CBRFILE`
-
-# Now, build the "new" file name,
 NEWNAME="$BASENAME.cbz"
 
 echo
@@ -65,13 +58,16 @@ CBRSTORE=`find */.DS_Store 2>/dev/null`
 echo "-> Compressing"
 7z a -tzip -mx=9 "$NEWNAME" * > /dev/null
 
-# And move it to the directory where we found the original ".cbr" file
+# And move it to the directory where we found the original file
 mv "$NEWNAME" "$DIRNAME"
 
 echo "--> Cleaning up"
 cd ..
 rm -r "$BASENAME"
+
+if [ "$CBFORMAT" != ".cbz" ]; then
 rm "$CBRFILE"
+fi
 
 done
 
