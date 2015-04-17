@@ -6,6 +6,11 @@ Requires:
 
 7-Zip - http://www.7-zip.org/
 
+Usage:
+  -s [ source directory ]
+  -i [ input file type {cbr,cbz,cbt} ]
+  -o [ output file type {cbz, cbt} ]
+
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
 - Removes Scan credit pages, if found and possible
