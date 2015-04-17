@@ -36,12 +36,13 @@ fi
 
 clear
 echo
+cd "$SOURCE" && SOURCE=$(pwd)
 echo "+ Working from $SOURCE"
-cd "$SOURCE"
+
 [[ -d "$TEMP" ]] && rm -rf "$TEMP"
 mkdir "$TEMP" && cd "$TEMP"
 
-find "$SOURCE" -name "*.$INPUT" | while read CBFILE; do
+find "$SOURCE" -name "*$INPUT" | while read CBFILE; do
 BASENAME=`basename $CBFILE $INPUT`
 DIRNAME=`dirname $CBFILE`
 NEWNAME="$BASENAME$OUTPUT"
