@@ -5,7 +5,6 @@ TEMP=".cb_tmp"
 INPUT=cbr
 OUTPUT=cbz
 TYPE=
-LOG=
 
 while getopts s:i:o: opt; do
 	case $opt in
