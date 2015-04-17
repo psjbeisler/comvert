@@ -1,12 +1,10 @@
-cbr2z
+comvert
 =====
-A quick bash script to batch convert .cbr Comic Books to .cbz
+A quick bash script to batch convert digital Comic Books to differnt formats.
 
 Requires:
 
 7-Zip - http://www.7-zip.org/
-
-( Must be in the desired working directory before running. )
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
