@@ -1,0 +1,71 @@
+#!/bin/bash
+
+SOURCE=$(pwd)
+INPUT=.cbr
+OUTPUT=.cbz
+LOG=
+
+TEMP="/tmp/.cb_tmp"
+if [ -d "$TEMP" ]; then 
+rm -rf $TEMP
+fi
+
+while getopts s:i:o:l: opt; do
+	case $opt in
+	s)
+		SOURCE=$OPTARG
+		;;
+	i)
+		INPUT=$OPTARG
+		;;
+	o)
+		OUTPUT=$OPTARG
+		;;
+	l)
+		LOG=$OPTARG
+		;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+clear
+echo
+echo "+ Working from $SOURCE"
+cd "$SOURCE"
+
+find "$SOURCE" -name "*$INPUT" | while read CBFILE; do
+BASENAME=`basename $CBFILE $INPUT`
+DIRNAME=`dirname $CBFILE`
+NEWNAME="$BASENAME$OUTPUT"
+
+echo
+echo "> Processing: $BASENAME"
+mkdir "$BASENAME"
+echo "-> Extracting"
+7z x "$CBFILE" -O"$BASENAME" > /dev/null
+cd "$BASENAME"
+
+# Remove unwanted files
+CBSCAN=`find -type f -iname 'z*.*' 2>/dev/null`
+[[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No credits found"
+
+CBTHUMBS=`find */Thumbs.db 2>/dev/null`
+[[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Trashed Thumbs.db"
+
+CBSTORE=`find */.DS_Store 2>/dev/null`
+[[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Trashed .DS_Store"
+
+echo "-> Compressing"
+7z a -t$OUTPUT "$NEWNAME" * > /dev/null
+
+# And move it to the directory where we found the original file
+mv "$NEWNAME" "$DIRNAME"
+
+echo "--> Cleaning up"
+cd ..
+rm -r "$BASENAME"
+rm "$CBRFILE"
+rm -r "$TEMP"
+echo
+echo "=> Conversion Done"
