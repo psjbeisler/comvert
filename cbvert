@@ -1,14 +1,11 @@
 #!/bin/bash
 
 SOURCE=$(pwd)
-INPUT=.cbr
-OUTPUT=.cbz
+TEMP=".cb_tmp"
+INPUT=cbr
+OUTPUT=cbz
+TYPE=
 LOG=
-
-TEMP="/tmp/.cb_tmp"
-if [ -d "$TEMP" ]; then 
-rm -rf $TEMP
-fi
 
 while getopts s:i:o:l: opt; do
 	case $opt in
@@ -29,12 +26,22 @@ done
 
 shift $((OPTIND - 1))
 
+if [ "$OUTPUT"=="cbz" ]; then
+TYPE="zip"
+elif [ "$OUTPUT"=="cbt" ]; then
+TYPE="tar"
+elif [ "$OUTPUT"=="cbr" ]; then
+TYPE="rar"
+fi
+
 clear
 echo
 echo "+ Working from $SOURCE"
 cd "$SOURCE"
+[[ -d "$TEMP" ]] && rm -rf "$TEMP"
+mkdir "$TEMP" && cd "$TEMP"
 
-find "$SOURCE" -name "*$INPUT" | while read CBFILE; do
+find "$SOURCE" -name "*.$INPUT" | while read CBFILE; do
 BASENAME=`basename $CBFILE $INPUT`
 DIRNAME=`dirname $CBFILE`
 NEWNAME="$BASENAME$OUTPUT"
@@ -47,25 +54,30 @@ echo "-> Extracting"
 cd "$BASENAME"
 
 # Remove unwanted files
-CBSCAN=`find -type f -iname 'z*.*' 2>/dev/null`
-[[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No credits found"
+CBRSCANNER=`find -type f -iname 'z*.*' 2>/dev/null`
+[[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No matches found"
 
-CBTHUMBS=`find */Thumbs.db 2>/dev/null`
+CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
 [[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Trashed Thumbs.db"
 
-CBSTORE=`find */.DS_Store 2>/dev/null`
+CBRSTORE=`find */.DS_Store 2>/dev/null`
 [[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Trashed .DS_Store"
 
 echo "-> Compressing"
-7z a -t$OUTPUT "$NEWNAME" * > /dev/null
+7z a -t$TYPE "$NEWNAME" * > /dev/null
 
-# And move it to the directory where we found the original file
 mv "$NEWNAME" "$DIRNAME"
 
 echo "--> Cleaning up"
 cd ..
 rm -r "$BASENAME"
-rm "$CBRFILE"
-rm -r "$TEMP"
+
+if [ "$INPUT" != "$OUTPUT" ]; then
+rm "$CBFILE"
+fi
+
+done
+cd ..
+rm -rf "$TEMP"
 echo
 echo "=> Conversion Done"
