@@ -7,7 +7,7 @@ OUTPUT=cbz
 TYPE=
 LOG=
 
-while getopts s:i:o:l: opt; do
+while getopts s:i:o: opt; do
 	case $opt in
 	s)
 		SOURCE=$OPTARG
@@ -17,9 +17,6 @@ while getopts s:i:o:l: opt; do
 		;;
 	o)
 		OUTPUT=$OPTARG
-		;;
-	l)
-		LOG=$OPTARG
 		;;
 	esac
 done
