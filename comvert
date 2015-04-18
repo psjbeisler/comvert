@@ -4,8 +4,11 @@ SOURCE=$(pwd)
 TEMP=".cb_tmp"
 INPUT=cbr
 OUTPUT=cbz
+CBLOG="comvert.log"
+IFS="|"
 TYPE=
 
+clear
 while getopts s:i:o: opt; do
 	case $opt in
 	s)
@@ -30,10 +33,14 @@ elif [ "$OUTPUT"=="cbr" ]; then
 TYPE="rar"
 fi
 
-clear
 echo
+cd "$SOURCE" && SOURCE=$(pwd) 
+
+[[ -f "$CBLOG" ]] && rm "$CBLOG"
+exec > >(tee "$CBLOG")
+
 echo "+ Working from $SOURCE"
-cd "$SOURCE" && SOURCE=$(pwd)
+
 [[ -d "$TEMP" ]] && rm -rf "$TEMP"
 mkdir "$TEMP" && cd "$TEMP"
 
@@ -74,6 +81,16 @@ fi
 
 done
 cd ..
-rm -rf "$TEMP"
+rm -r "$TEMP"
 echo
 echo "=> Conversion Done"
+echo
+CBDID=$(cat "$CBLOG" |grep -c -i "Processing")
+CBFND=$(cat "$CBLOG" |grep -c -i "Found scan credits")
+CBNOT=$(cat "$CBLOG" |grep -c -i "No matches found")
+CBMSD=$(cat "$CBLOG" |grep -B 2 -i "No matches found" |grep "Processing" |cut -c 15-$NF)
+[[ ! -z "$CBMSD" ]] && echo $CBMSD > missed_files.log
+echo "+ $CBDID files processed"
+echo "+ $CBFND scan credits found"
+echo "+ $CBNOT missed files logged"
+echo
