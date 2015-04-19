@@ -12,7 +12,7 @@ Usage:
   -s [ source directory ]
   -i [ input file type {cbr,cbz,cbt} ]
   -o [ output file type {cbz,cbt} ]
-      (7-Zip doesn't support .rar ouput)
+      7-Zip doesn't support .rar ouput
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
