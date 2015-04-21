@@ -6,7 +6,7 @@ INPUT=cbr
 OUTPUT=cbz
 CBLOG="comvert.log"
 IFS="|"
-TYPE=
+FORMAT=
 
 while getopts s:i:o: opt; do
 	case $opt in
@@ -24,12 +24,14 @@ done
 
 shift $((OPTIND - 1))
 
+
 if [ "$OUTPUT" == "cbz" ]; then
-TYPE="zip"
+FORMAT="zip"
 elif [ "$OUTPUT" == "cbt" ]; then
-TYPE="tar"
-elif [ "$OUTPUT" == "cbr" ]; then
-echo "+ RAR output is not supported"
+FORMAT="tar"
+elif [ "$OUTPUT" == "cb7" ]; then
+FORMAT="7z"; else
+echo "+ Output format is not supported"
 echo && exit 0
 fi
 
@@ -67,7 +69,7 @@ CBRSTORE=`find */.DS_Store 2>/dev/null`
 [[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Trashed .DS_Store"
 
 echo "-> Compressing"
-7z a -t$TYPE "$NEWNAME" * > /dev/null
+7z a -t$FORMAT "$NEWNAME" * > /dev/null
 
 mv "$NEWNAME" "$DIRNAME"
 
