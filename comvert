@@ -8,7 +8,6 @@ CBLOG="comvert.log"
 IFS="|"
 TYPE=
 
-clear
 while getopts s:i:o: opt; do
 	case $opt in
 	s)
@@ -25,15 +24,16 @@ done
 
 shift $((OPTIND - 1))
 
-if [ "$OUTPUT"=="cbz" ]; then
+if [ "$OUTPUT" == "cbz" ]; then
 TYPE="zip"
-elif [ "$OUTPUT"=="cbt" ]; then
+elif [ "$OUTPUT" == "cbt" ]; then
 TYPE="tar"
-elif [ "$OUTPUT"=="cbr" ]; then
-TYPE="rar"
+elif [ "$OUTPUT" == "cbr" ]; then
+echo "+ RAR output is not supported"
+echo && exit 0
 fi
 
-echo
+clear
 cd "$SOURCE" && SOURCE=$(pwd) 
 
 [[ -f "$CBLOG" ]] && rm "$CBLOG"
