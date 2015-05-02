@@ -59,13 +59,13 @@ echo "-> Extracting"
 cd "$BASENAME"
 
 # Remove unwanted files
-CBRSCANNER=`find -type f -iname 'z*.*' 2>/dev/null`
+CBSCANR=`find -type f -iname 'z*.*' 2>/dev/null`
 [[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No matches found"
 
-CBRTHUMBS=`find */Thumbs.db 2>/dev/null`
+CBTHUMBS=`find */Thumbs.db 2>/dev/null`
 [[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Trashed Thumbs.db"
 
-CBRSTORE=`find */.DS_Store 2>/dev/null`
+CBSTORE=`find */.DS_Store 2>/dev/null`
 [[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Trashed .DS_Store"
 
 echo "-> Compressing"
