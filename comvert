@@ -59,7 +59,7 @@ echo "-> Extracting"
 cd "$BASENAME"
 
 # Remove unwanted files
-CBSCANR=`find -type f -iname 'z*.*' 2>/dev/null`
+CBSCAN=`find -type f -iname 'z*.*' 2>/dev/null`
 [[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No matches found"
 
 CBTHUMBS=`find */Thumbs.db 2>/dev/null`
