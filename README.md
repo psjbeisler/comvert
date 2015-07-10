@@ -13,6 +13,8 @@ Usage:
   -i [ input file type {cbr,cbz,cbt,cb7} ]
   -o [ output file type {cbz,cbt,cb7} ]
       7-Zip doesn't support .rar ouput
+  -q
+      quiet, no log file in working directory
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
