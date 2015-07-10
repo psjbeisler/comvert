@@ -18,6 +18,7 @@ Usage:
       7-Zip doesn't support .rar ouput
       
   -q
+  
       quiet, no log file in working directory
 
 - Removes Thumbs.db from archive, if found
