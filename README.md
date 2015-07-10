@@ -9,6 +9,7 @@ Requires:
 If ran without options, will convert all .cbr files to .cbz in current directory.
 
 Usage:
+
   -s [ source directory ]
   
   -i [ input file type {cbr,cbz,cbt,cb7} ]
