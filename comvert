@@ -2,13 +2,12 @@
 
 SOURCE=$(pwd)
 TEMP=".cb_tmp"
-INPUT=cbr
-OUTPUT=cbz
-CBLOG="comvert.log"
+INPUT="cbr"
+OUTPUT="cbz"
 IFS="|"
 FORMAT=
 
-while getopts s:i:o: opt; do
+while getopts s:i:o:q opt; do
 	case $opt in
 	s)
 		SOURCE=$OPTARG
@@ -19,11 +18,18 @@ while getopts s:i:o: opt; do
 	o)
 		OUTPUT=$OPTARG
 		;;
+	q)
+		QUIET="1"
+		;;
 	esac
 done
 
 shift $((OPTIND - 1))
 
+if [ "$QUIET" == "1" ]; then
+CBLDIR="/tmp"; else
+CBLDIR="$SOURCE"
+fi
 
 if [ "$OUTPUT" == "cbz" ]; then
 FORMAT="zip"
@@ -36,8 +42,8 @@ echo && exit 0
 fi
 
 clear
-cd "$SOURCE" && SOURCE=$(pwd) 
-
+cd "$SOURCE"
+CBLOG="$CBLDIR/comvert.log"
 [[ -f "$CBLOG" ]] && rm "$CBLOG"
 exec > >(tee "$CBLOG")
 
@@ -91,7 +97,7 @@ CBDID=$(cat "$CBLOG" |grep -c -i "Processing")
 CBFND=$(cat "$CBLOG" |grep -c -i "Found scan credits")
 CBNOT=$(cat "$CBLOG" |grep -c -i "No matches found")
 CBMSD=$(cat "$CBLOG" |grep -B 2 -i "No matches found" |grep "Processing" |cut -c 15-$NF)
-[[ ! -z "$CBMSD" ]] && echo $CBMSD > missed_files.log
+[[ ! -z "$CBMSD" ]] && echo $CBMSD > "$SOURCE/missed_files.log"
 echo "+ $CBDID files processed"
 echo "+ $CBFND scan credits found"
 echo "+ $CBNOT missed files logged"
