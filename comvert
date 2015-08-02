@@ -8,7 +8,6 @@ IFS="|"
 QUIET="0"
 FORMAT=
 
-
 while getopts s:i:o:q opt; do
 	case $opt in
 	s)
@@ -40,7 +39,7 @@ FORMAT="tar"
 elif [ "$OUTPUT" == "cb7" ]; then
 FORMAT="7z"; else
 echo "+ Output format is not supported"
-echo && exit 0
+echo && exit 1
 fi
 
 clear
@@ -51,7 +50,7 @@ exec > >(tee "$CBLOG")
 echo "+ Working from $SOURCE"
 
 [[ -d "$TEMP" ]] && rm -rf "$TEMP"
-mkdir "$TEMP" >/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
+mkdir "$TEMP" 2>/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
 cd "$TEMP"
 
 find "$SOURCE" -name "*.$INPUT" | while read CBFILE; do
