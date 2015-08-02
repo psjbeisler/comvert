@@ -5,7 +5,9 @@ TEMP=".cb_tmp"
 INPUT="cbr"
 OUTPUT="cbz"
 IFS="|"
+QUIET="0"
 FORMAT=
+
 
 while getopts s:i:o:q opt; do
 	case $opt in
@@ -44,13 +46,13 @@ fi
 clear
 cd "$SOURCE"
 CBLOG="$CBLDIR/comvert.log"
-[[ -f "$CBLOG" ]] && rm "$CBLOG"
 exec > >(tee "$CBLOG")
 
 echo "+ Working from $SOURCE"
 
 [[ -d "$TEMP" ]] && rm -rf "$TEMP"
-mkdir "$TEMP" && cd "$TEMP"
+mkdir "$TEMP" >/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
+cd "$TEMP"
 
 find "$SOURCE" -name "*.$INPUT" | while read CBFILE; do
 BASENAME=`basename "$CBFILE" .$INPUT`
@@ -61,7 +63,7 @@ echo
 echo "> Processing: $BASENAME"
 mkdir "$BASENAME"
 echo "-> Extracting"
-7z x "$CBFILE" -O"$BASENAME" > /dev/null
+7z x "$CBFILE" -O"$BASENAME" >/dev/null
 cd "$BASENAME"
 
 # Remove unwanted files
@@ -102,3 +104,4 @@ echo "+ $CBDID files processed"
 echo "+ $CBFND scan credits found"
 echo "+ $CBNOT missed files logged"
 echo
+#notify-send Comvert "Sir, your comics are done"
