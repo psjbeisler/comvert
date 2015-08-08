@@ -6,7 +6,6 @@ INPUT="cbr"
 OUTPUT="cbz"
 IFS="|"
 QUIET="0"
-FORMAT=
 
 while getopts s:i:o:q opt; do
 	case $opt in
