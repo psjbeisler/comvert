@@ -66,13 +66,18 @@ cd "$BASENAME"
 
 # Remove unwanted files
 CBSCAN=`find -type f -iname "z*.*" 2>/dev/null`
-[[ ! -z "$CBSCAN" ]] && echo "--> Found scan credits" && rm $CBSCAN || echo "--> No matches found"
+if [ ! -z "$CBSCAN" ]
+then
+	find -type f -iname "z*.*" -exec rm {} + && echo "--> Removed Scan Credits"
+else
+	echo "--> No matches found"
+fi
 
 CBTHUMBS=`find */Thumbs.db 2>/dev/null`
-[[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Trashed Thumbs.db"
+[[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Removed Thumbs.db"
 
 CBSTORE=`find */.DS_Store 2>/dev/null`
-[[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Trashed .DS_Store"
+[[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Removed .DS_Store"
 
 echo "-> Compressing"
 7z a -t$FORMAT "$NEWNAME" * > /dev/null
