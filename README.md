@@ -18,12 +18,10 @@ Usage:
   
         7-Zip doesn't support .rar ouput
 
-    -q
-  
-        quiet, no log file in working directory
-
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
-- Removes Scan credit pages, if found and possible
+- Removes Scan credit pages, if found
+- Logs suspicious files not in the blacklist
+( Please submit  a pull request for any new additions )
 
-<a href="http://imgur.com/Jnijkrm"><img src="http://i.imgur.com/Jnijkrml.png" title="source: imgur.com" /></a>
+<a href="https://i.imgur.com/m06Js32"><img src="https://i.imgur.com/m06Js32l.png" title="source: imgur.com" /></a>
