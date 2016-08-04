@@ -65,7 +65,7 @@ echo "--> Scanning"
 
 while read CBSCAN; do
 	CBCRED=`find -type f -iname "$CBSCAN"`
-	[[ ! -z "$CBCRED" ]] && rm "$CBCRED" && echo "---> Removed Blacklisted File"
+	[[ ! -z "$CBCRED" ]] && rm "$CBCRED" && echo "--> Removed Blacklisted File"
 done < "$LIST"
 
 CBSCAN=`find -type f -iname "[x-z]*"`
@@ -73,7 +73,7 @@ if [ ! -z "$CBSCAN" ]; then
 	echo "$BASENAME" >> "$SUSP"
 	echo "$CBSCAN" >> "$SUSP"
 	echo "|" >> "$SUSP"
-	echo "---> Suspicious Files Logged!"
+	echo "--> Suspicious Files Logged!"
 fi
 
 echo "-> Compressing" && 7z a -t$FORMAT "$NEWNAME" * > /dev/null
