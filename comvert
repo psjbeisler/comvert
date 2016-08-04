@@ -49,7 +49,7 @@ touch "$LOG" 2>/dev/null || { echo "+ Access denied to $TEMP"; exit 1; }
 mkdir "$WORK" 2>/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
 
 clear && exec > >(tee "$LOG")
-cd "$SOURCE" && echo "+ Working from $SOURCE"
+cd "$WORK" && echo "+ Working from $SOURCE"
 echo
 
 ## Convert Loop
