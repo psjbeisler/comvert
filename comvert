@@ -79,7 +79,7 @@ fi
 echo "-> Compressing" && 7z a -t$FORMAT "$NEWNAME" * > /dev/null
 mv "$NEWNAME" "$DIRNAME"
 
-echo "-> Cleaning up" && cd .. && rm -r "$BASENAME"
+echo "> Cleaning up" && cd .. && rm -r "$BASENAME"
 echo
 
 ## Dont delete the new file if it has the same name
