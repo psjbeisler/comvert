@@ -70,7 +70,7 @@ if [ ! -z "$CBSCAN" ]
 then
 	find -type f -iname "z*.*" -exec rm {} + && echo "--> Removed Scan Credits"
 else
-	echo "--> No matches found"
+	echo "--> No Matches Found"
 fi
 
 CBTHUMBS=`find */Thumbs.db 2>/dev/null`
@@ -99,9 +99,9 @@ echo
 echo "=> Conversion Done"
 echo
 CBDID=$(cat "$CBLOG" |grep -c -i "Processing")
-CBFND=$(cat "$CBLOG" |grep -c -i "Found scan credits")
-CBNOT=$(cat "$CBLOG" |grep -c -i "No matches found")
-CBMSD=$(cat "$CBLOG" |grep -B 2 -i "No matches found" |grep "Processing" |cut -c 15-$NF)
+CBFND=$(cat "$CBLOG" |grep -c -i "Removed Scan Credits")
+CBNOT=$(cat "$CBLOG" |grep -c -i "No Matches Found")
+CBMSD=$(cat "$CBLOG" |grep -B 2 -i "No Matches Found" |grep "Processing" |cut -c 15-$NF)
 [[ ! -z "$CBMSD" ]] && echo $CBMSD > "$SOURCE/missed_files.log"
 echo "+ $CBDID files processed"
 echo "+ $CBFND scan credits found"
