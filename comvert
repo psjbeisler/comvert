@@ -1,12 +1,21 @@
 #!/bin/bash
 
+## User Variables
+TEMP="/tmp"
+INST="/opt/comvert" # Set directory to the blacklist
+
+## Default Options
 SOURCE=$(pwd)
-TEMP=".cb_tmp"
 INPUT="cbr"
 OUTPUT="cbz"
-IFS="|"
-QUIET="0"
 
+## Comvert Variables
+LOG="$TEMP/comvert.log"
+LIST="$INST/blacklist.ini"
+WORK="$SOURCE/.cb_tmp"
+SUSP="$SOURCE/suspicious_files.txt"
+
+## START
 while getopts s:i:o:q opt; do
 	case $opt in
 	s)
@@ -18,93 +27,71 @@ while getopts s:i:o:q opt; do
 	o)
 		OUTPUT=$OPTARG
 		;;
-	q)
-		QUIET="1"
-		;;
 	esac
 done
 
 shift $((OPTIND - 1))
 
-if [ "$QUIET" == "1" ]; then
-CBLDIR="/tmp"; else
-CBLDIR="$SOURCE"
-fi
-
 if [ "$OUTPUT" == "cbz" ]; then
-FORMAT="zip"
+	FORMAT="zip"
 elif [ "$OUTPUT" == "cbt" ]; then
-FORMAT="tar"
+	FORMAT="tar"
 elif [ "$OUTPUT" == "cb7" ]; then
-FORMAT="7z"; else
-echo "+ Output format is not supported"
-echo && exit 1
+	FORMAT="7z"; else
+		echo "+ Output format is not supported"
+		echo && exit 1
 fi
 
-clear
-cd "$SOURCE"
-CBLOG="$CBLDIR/comvert.log"
-exec > >(tee "$CBLOG")
+[[ -f "$LOG" ]] && rm "$LOG"
+touch "$LOG" 2>/dev/null || { echo "+ Access denied to $TEMP"; exit 1; }
 
-echo "+ Working from $SOURCE"
+[[ -d "$WORK" ]] && rm -rf "$WORK"
+mkdir "$WORK" 2>/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
 
-[[ -d "$TEMP" ]] && rm -rf "$TEMP"
-mkdir "$TEMP" 2>/dev/null || { echo "+ Access denied to $SOURCE"; exit 1; }
-cd "$TEMP"
+clear && exec > >(tee "$LOG")
+cd "$SOURCE" && echo "+ Working from $SOURCE"
+echo
 
+## Convert Loop
 find "$SOURCE" -name "*.$INPUT" | while read CBFILE; do
 BASENAME=`basename "$CBFILE" .$INPUT`
 DIRNAME=`dirname "$CBFILE"`
 NEWNAME="$BASENAME.$OUTPUT"
 
-echo
-echo "> Processing: $BASENAME"
-mkdir "$BASENAME"
-echo "-> Extracting"
-7z x "$CBFILE" -O"$BASENAME" >/dev/null
-cd "$BASENAME"
+echo "> Processing: $BASENAME" && mkdir "$BASENAME"
+echo "-> Extracting" && 7z x "$CBFILE" -O"$BASENAME" >/dev/null && cd "$BASENAME"
 
-# Remove unwanted files
-CBSCAN=`find -type f -iname "z*.*" 2>/dev/null`
-if [ ! -z "$CBSCAN" ]
-then
-	find -type f -iname "z*.*" -exec rm {} + && echo "--> Removed Scan Credits"
-else
-	echo "--> No Matches Found"
+echo "--> Scanning"
+
+while read CBSCAN; do
+	CBCRED=`find -type f -iname "$CBSCAN"`
+	[[ ! -z "$CBCRED" ]] && rm "$CBCRED" && echo "---> Removed Blacklisted File"
+done < "$LIST"
+
+CBSCAN=`find -type f -iname "[x-z]*"`
+if [ ! -z "$CBSCAN" ]; then
+	echo "$BASENAME" >> "$SUSP"
+	echo "$CBSCAN" >> "$SUSP"
+	echo "|" >> "$SUSP"
+	echo "---> Suspicious Files Logged!"
 fi
 
-CBTHUMBS=`find */Thumbs.db 2>/dev/null`
-[[ ! -z "$CBTHUMBS" ]] && rm $CBTHUMBS && echo "--> Removed Thumbs.db"
-
-CBSTORE=`find */.DS_Store 2>/dev/null`
-[[ ! -z "$CBSTORE" ]] && rm $CBSTORE && echo "--> Removed .DS_Store"
-
-echo "-> Compressing"
-7z a -t$FORMAT "$NEWNAME" * > /dev/null
-
+echo "-> Compressing" && 7z a -t$FORMAT "$NEWNAME" * > /dev/null
 mv "$NEWNAME" "$DIRNAME"
 
-echo "--> Cleaning up"
-cd ..
-rm -r "$BASENAME"
+echo "-> Cleaning up" && cd .. && rm -r "$BASENAME"
+echo
 
-if [ "$INPUT" != "$OUTPUT" ]; then
-rm "$CBFILE"
-fi
-
+## Dont delete the new file if it has the same name
+[[ "$INPUT" != "$OUTPUT" ]] &&	rm "$CBFILE"
 done
-cd ..
-rm -r "$TEMP"
+
+cd .. && rm -r "$WORK" && echo "=> Conversion Done"
 echo
-echo "=> Conversion Done"
+
+CBDID=$(cat "$LOG" |grep -c -i "Processing") && echo "+ $CBDID archives processed"
+CBFND=$(cat "$LOG" |grep -c -i "Blacklisted") && echo "+ $CBFND files removed"
+CBMSD=$(cat "$LOG" |grep -c -i "Suspicious") && echo "+ $CBMSD suspicious archives"
 echo
-CBDID=$(cat "$CBLOG" |grep -c -i "Processing")
-CBFND=$(cat "$CBLOG" |grep -c -i "Removed Scan Credits")
-CBNOT=$(cat "$CBLOG" |grep -c -i "No Matches Found")
-CBMSD=$(cat "$CBLOG" |grep -B 2 -i "No Matches Found" |grep "Processing" |cut -c 15-$NF)
-[[ ! -z "$CBMSD" ]] && echo $CBMSD > "$SOURCE/missed_files.log"
-echo "+ $CBDID files processed"
-echo "+ $CBFND scan credits found"
-echo "+ $CBNOT missed files logged"
-echo
+
 #notify-send Comvert "Sir, your comics are done"
