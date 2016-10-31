@@ -17,6 +17,8 @@ Usage:
     -o [ output file type {cbz,cbt,cb7} ]
   
         7-Zip doesn't support .rar ouput
+        
+    -f [ filename ]
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
