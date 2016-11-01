@@ -2,34 +2,37 @@
 
 ## System Variables
 BLIST="/opt/comvert/blacklist.ini" # Define the blacklist
+TEMP="/tmp" # Convert stats are temporary
 
 ## Default Options
 SOURCE=$(pwd)
 INPUT="cbr"
 OUTPUT="cbz"
-TEMP="/tmp"
 
 ## User Options
-while getopts s:i:o:f: opt; do
+while getopts s:i:o:f:l opt; do
 	case $opt in
-	s)
+	s) # Source directory
 		SOURCE=$OPTARG
 		;;
-	i)
+	i) # Input format
 		INPUT=$OPTARG
 		;;
-	o)
+	o) # Output format
 		OUTPUT=$OPTARG
 		;;
-	f)
+	f) # Only work one file
 		FILE=$OPTARG
+		;;
+	l) # Log suspicious files locally
+		LOCAL="1"
 		;;
 	esac
 done
 
 shift $((OPTIND - 1))
 
-## Define INPUT
+## Define INPUT format
 if [ -z "$FILE" ]; then
 	COMIC="*.$INPUT"
 else
@@ -38,7 +41,7 @@ else
 	COMIC="$FILE.$INPUT"
 fi
 
-## Define OUTPUT
+## Define OUTPUT format
 if [ "$OUTPUT" == "cbz" ]; then
 	FORMAT="zip"
 elif [ "$OUTPUT" == "cbt" ]; then
@@ -112,10 +115,15 @@ done < "$BLIST"
 SUSP="$SOURCE/suspicious_files.txt"
 CBSCAN=`find -type f -iname "[x-z]*"`
 if [ ! -z "$CBSCAN" ]; then
-	echo "$BASENAME" >> "$SUSP"
-	echo "$CBSCAN" >> "$SUSP"
-	echo "|" >> "$SUSP"
-	echo "--> Suspicious Files Logged!"
+	echo "--> Suspicious Files found!"
+	if [ "$LOCAL" == "1" ];then
+		echo "$BASENAME" >> "$SUSP"
+		echo "$CBSCAN" >> "$SUSP"
+		echo "|" >> "$SUSP"
+		echo "--> And logged to file"
+	else
+		echo "--> But not logged"
+	fi
 fi
 
 echo "-> Compressing"
