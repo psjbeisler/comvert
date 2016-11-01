@@ -33,7 +33,9 @@ shift $((OPTIND - 1))
 if [ -z "$FILE" ]; then
 	COMIC="*.$INPUT"
 else
-	COMIC="$FILE"
+	INPUT="${FILE#*.}" # Get INPUT type from file
+	FILE=`basename "$FILE" .$INPUT` # Redefine the file
+	COMIC="$FILE.$INPUT"
 fi
 
 ## Define OUTPUT
@@ -93,7 +95,7 @@ echo "> Processing: $BASENAME"
 	cd "$CACHE"
 
 echo "-> Extracting"
-	7z x "$CBFILE" -O"$BASENAME" >/dev/null
+	7z x "$CBFILE" >/dev/null
 
 echo "--> Scanning"
 
