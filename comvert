@@ -115,7 +115,7 @@ done < "$BLIST"
 SUSP="$SOURCE/suspicious_files.txt"
 CBSCAN=`find -type f -iname "[x-z]*"`
 if [ ! -z "$CBSCAN" ]; then
-	echo "--> Suspicious Files found!"
+	echo "--> Suspicious files found!"
 	if [ "$LOCAL" == "1" ];then
 		echo "$BASENAME" >> "$SUSP"
 		echo "$CBSCAN" >> "$SUSP"
