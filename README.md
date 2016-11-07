@@ -18,12 +18,14 @@ Usage:
   
         7-Zip doesn't support .rar ouput
         
-    -f [ filename ]
+    -f [ single filename ]
+    
+    -l [ log anything suspicious ]
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
-- Removes Scan credit pages, if found
-- Logs suspicious files not in the blacklist
+- Removes scan credit pages, if found
+- Optionally log suspicious files not in the blacklist  
 ( Please submit  a pull request for any new additions )
 
 <a href="https://i.imgur.com/m06Js32"><img src="https://i.imgur.com/m06Js32l.png" title="source: imgur.com" /></a>
