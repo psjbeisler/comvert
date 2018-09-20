@@ -32,6 +32,11 @@ done
 
 shift $((OPTIND - 1))
 
+## Check source folder
+if [[ "$SOURCE" != /* ]]; then
+	SOURCE="$(dirname -- "$(realpath -- "$SOURCE")")/$SOURCE"
+fi
+
 ## Define INPUT format
 if [ -z "$FILE" ]; then
 	COMIC="*.$INPUT"
