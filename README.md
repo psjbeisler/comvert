@@ -24,6 +24,7 @@ Usage:
 
 - Removes Thumbs.db from archive, if found
 - Removes .DS_Store from archive, if found
+- Removes ComicInfo.xml from archive, if found
 - Removes scan credit pages, if found
 - Optionally log suspicious files not in the blacklist  
 ( Please submit  a pull request for any new additions )
