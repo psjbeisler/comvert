@@ -1,3 +1,5 @@
+## Version 2 for cross-platform compatability
+
 import os
 import tempfile
 import patoolib
