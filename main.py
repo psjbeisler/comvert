@@ -6,7 +6,7 @@ import patoolib
 blacklist = '/opt/comvert/blacklist.ini'
 type_in = '.cbr'
 type_out = '.cbz'
-wd = os.getcwd()
+cwd = os.getcwd()
 
 ## User Options
 # User INPUT format
@@ -18,13 +18,13 @@ wd = os.getcwd()
 # Start Logging
 
 def extract_by_type():
-    for f in os.scandir(wd):
+    for f in os.scandir(cwd):
         if f.name.endswith(type_in):
             global td
             td = tempfile.TemporaryDirectory()
-            global n, e
-            n, e = os.path.splitext(f.name)
-            currentfile = os.path.join(wd, f.name)
+            global comic, type
+            comic, type = os.path.splitext(f.name)
+            currentfile = os.path.join(cwd, f.name)
             patoolib.extract_archive(currentfile, outdir=td.name)
             remove_blacklisted()
             create_new_archive()
@@ -33,19 +33,18 @@ def extract_by_name():
     pass
 
 def remove_blacklisted():
-    print('Checking Blacklist...')
+    print('checking: ' + blacklist)
     with open(blacklist, 'r') as bl:
         for spam in bl.read().splitlines():
             for root, dirs, files in os.walk(td.name):
                 for file in files:
                     if file == spam:
                         spamfile = os.path.join(td.name, spam)
-                        print('Removing: ' + spam)
+                        print('found: ' + spam + ' in ' + comic)
                         os.remove(spamfile)
 
 def create_new_archive():
-    newfile = os.path.join(wd, n + type_out)
-    print('Creating: ' + newfile)
+    newfile = os.path.join(cwd, comic + type_out)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
 
