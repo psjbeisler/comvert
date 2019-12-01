@@ -3,7 +3,7 @@ import tempfile
 import patoolib
 
 ## System Variables
-blacklist = '/opt/comvert/blacklist.ini'
+blacklist = os.path.join(os.path.dirname(__file__), 'blacklist.ini')
 type_in = '.cbr'
 type_out = '.cbz'
 cwd = os.getcwd()
