@@ -18,6 +18,9 @@ parser.add_argument('-o', '--output', action='store', default='.cbz',
                     help='select output file type')
 args = parser.parse_args()
 
+def file_by_name():
+    pass
+
 def file_by_type():
     global f, td, comic, type
     for f in os.scandir(cwd):
@@ -26,13 +29,11 @@ def file_by_type():
             comic, type = os.path.splitext(f.name)
             extract_archive()
 
-def file_by_name():
-    pass
-
 def extract_archive():
     global currentfile
     currentfile = os.path.join(cwd, f.name)
     patoolib.extract_archive(currentfile, outdir=td.name)
+    remove_blacklisted()
 
 def remove_blacklisted():
     print('checking: ' + blacklist)
@@ -44,6 +45,7 @@ def remove_blacklisted():
                         spamfile = os.path.join(td.name, spam)
                         print('found: ' + spam + ' in ' + comic)
                         os.remove(spamfile)
+    create_archive()
 
 def create_archive():
     global newfile, savfile
@@ -55,6 +57,7 @@ def create_archive():
         os.rename(newfile, savfile)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
+    cleanup()
 
 def cleanup():
     if newfile != currentfile:
@@ -63,9 +66,6 @@ def cleanup():
         os.remove(savfile)
 
 file_by_type()
-remove_blacklisted()
-create_archive()
-cleanup()
 
 ## Scan for Suspicious files
 
