@@ -1,4 +1,5 @@
-## Version 2 for cross-platform compatability
+#!/usr/bin/env python
+"""Version 2 for cross-platform compatability"""
 
 import os
 import tempfile
