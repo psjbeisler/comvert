@@ -19,20 +19,21 @@ cwd = os.getcwd()
 # Sanity checks
 # Start Logging
 
-def extract_by_type():
+def file_by_type():
+    global f, td, comic, type
     for f in os.scandir(cwd):
         if f.name.endswith(type_in):
-            global td
             td = tempfile.TemporaryDirectory()
-            global comic, type
             comic, type = os.path.splitext(f.name)
-            currentfile = os.path.join(cwd, f.name)
-            patoolib.extract_archive(currentfile, outdir=td.name)
-            remove_blacklisted()
-            create_new_archive()
+            extract_archive()
 
-def extract_by_name():
+def file_by_name():
     pass
+
+def extract_archive():
+    global currentfile
+    currentfile = os.path.join(cwd, f.name)
+    patoolib.extract_archive(currentfile, outdir=td.name)
 
 def remove_blacklisted():
     print('checking: ' + blacklist)
@@ -45,16 +46,19 @@ def remove_blacklisted():
                         print('found: ' + spam + ' in ' + comic)
                         os.remove(spamfile)
 
-def create_new_archive():
+def create_archive():
+    global newfile
     newfile = os.path.join(cwd, comic + type_out)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
+    if newfile != currentfile:
+        os.remove(currentfile)
 
-extract_by_type()
+file_by_type()
+remove_blacklisted()
+create_archive()
 
 ## Scan for Suspicious files
-
-## Dont delete the new file if it has the same name
 
 ## Stats
 ## Optionally Notify
