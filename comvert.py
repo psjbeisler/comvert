@@ -17,11 +17,6 @@ parser.add_argument('-o', '--output', action='store', default='.cbz',
                     help='select output file type')
 args = parser.parse_args()
 
-## Logging
-# Output Variables
-# Sanity checks
-# Start Logging
-
 def file_by_type():
     global f, td, comic, type
     for f in os.scandir(cwd):
