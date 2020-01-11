@@ -3,16 +3,19 @@
 import os
 import tempfile
 import patoolib
+import argparse
 
 ## System Variables
 blacklist = os.path.join(os.path.dirname(__file__), 'blacklist.ini')
-type_in = '.cbr'
-type_out = '.cbz'
 cwd = os.getcwd()
 
 ## User Options
-# User INPUT format
-# User OUTPUT format
+parser = argparse.ArgumentParser(description='Convert some comic books.')
+parser.add_argument('-i', '--input', action='store', default='.cbr',
+                    help='select input by file type')
+parser.add_argument('-o', '--output', action='store', default='.cbz',
+                    help='select output file type')
+args = parser.parse_args()
 
 ## Logging
 # Output Variables
@@ -22,7 +25,7 @@ cwd = os.getcwd()
 def file_by_type():
     global f, td, comic, type
     for f in os.scandir(cwd):
-        if f.name.endswith(type_in):
+        if f.name.endswith(args.input):
             td = tempfile.TemporaryDirectory()
             comic, type = os.path.splitext(f.name)
             extract_archive()
@@ -47,16 +50,26 @@ def remove_blacklisted():
                         os.remove(spamfile)
 
 def create_archive():
-    global newfile
-    newfile = os.path.join(cwd, comic + type_out)
+    global newfile, savfile
+    newfile = os.path.join(cwd, comic + args.output)
+    savfile = os.path.join(cwd, comic + '.sav')
+    if os.path.exists(newfile):
+        if os.path.exists(savfile):
+            os.remove(savfile)
+        os.rename(newfile, savfile)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
+
+def cleanup():
     if newfile != currentfile:
         os.remove(currentfile)
+    if os.path.exists(savfile):
+        os.remove(savfile)
 
 file_by_type()
 remove_blacklisted()
 create_archive()
+cleanup()
 
 ## Scan for Suspicious files
 
