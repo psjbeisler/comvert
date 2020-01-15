@@ -28,12 +28,14 @@ def file_by_type():
             td = tempfile.TemporaryDirectory()
             comic, type = os.path.splitext(f.name)
             extract_archive()
+            remove_blacklisted()
+            create_archive()
+            cleanup()
 
 def extract_archive():
     global currentfile
     currentfile = os.path.join(cwd, f.name)
     patoolib.extract_archive(currentfile, outdir=td.name)
-    remove_blacklisted()
 
 def remove_blacklisted():
     print('checking: ' + blacklist)
@@ -42,10 +44,9 @@ def remove_blacklisted():
             for root, dirs, files in os.walk(td.name):
                 for file in files:
                     if file == spam:
-                        spamfile = os.path.join(td.name, spam)
+                        spamfile = os.path.join(root, file)
                         print('found: ' + spam + ' in ' + comic)
                         os.remove(spamfile)
-    create_archive()
 
 def create_archive():
     global newfile, savfile
@@ -57,7 +58,6 @@ def create_archive():
         os.rename(newfile, savfile)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
-    cleanup()
 
 def cleanup():
     if newfile != currentfile:
