@@ -3,8 +3,8 @@
 
 import os
 import tempfile
-import patoolib
 import argparse
+import patoolib
 
 ## System Variables
 blacklist = os.path.join(os.path.dirname(__file__), 'blacklist.ini')
