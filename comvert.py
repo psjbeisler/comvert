@@ -35,7 +35,7 @@ def create_archive():
     if os.path.exists(bakfile):
         os.remove(bakfile)
 
-blacklist = os.path.abspath(os.path.dirname(__file__)) + '/blacklist.ini'
+blacklist = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'blacklist.ini')
 parser = argparse.ArgumentParser(description='Convert digital comic books')
 parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
 parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
