@@ -6,68 +6,48 @@ import tempfile
 import argparse
 import patoolib
 
-## System Variables
-blacklist = os.path.join(os.path.dirname(__file__), 'blacklist.ini')
-cwd = os.getcwd()
-
-## User Options
-parser = argparse.ArgumentParser(description='Convert some comic books.')
-parser.add_argument('-i', '--input', action='store', default='.cbr',
-                    help='select input by file type')
-parser.add_argument('-o', '--output', action='store', default='.cbz',
-                    help='select output file type')
-args = parser.parse_args()
-
-def file_by_name():
-    pass
-
-def file_by_type():
-    global f, td, comic, type
-    for f in os.scandir(cwd):
-        if f.name.endswith(args.input):
-            td = tempfile.TemporaryDirectory()
-            comic, type = os.path.splitext(f.name)
-            extract_archive()
-            remove_blacklisted()
-            create_archive()
-            cleanup()
-
 def extract_archive():
-    global currentfile
-    currentfile = os.path.join(cwd, f.name)
     patoolib.extract_archive(currentfile, outdir=td.name)
 
 def remove_blacklisted():
-    print('checking: ' + blacklist)
+    print('comvert: Scanning ' + blacklist)
     with open(blacklist, 'r') as bl:
         for spam in bl.read().splitlines():
-            for root, dirs, files in os.walk(td.name):
+            for root, _, files in os.walk(td.name):
                 for file in files:
                     if file == spam:
                         spamfile = os.path.join(root, file)
-                        print('found: ' + spam + ' in ' + comic)
+                        print('comvert: Removing' + spamfile)
                         os.remove(spamfile)
 
 def create_archive():
-    global newfile, savfile
-    newfile = os.path.join(cwd, comic + args.output)
-    savfile = os.path.join(cwd, comic + '.sav')
+    newfile = os.path.join(wd, comic + "." + args.output)
+    bakfile = os.path.join(wd, comic + '.bak')
     if os.path.exists(newfile):
-        if os.path.exists(savfile):
-            os.remove(savfile)
-        os.rename(newfile, savfile)
+        if os.path.exists(bakfile):
+            os.remove(bakfile)
+        os.rename(newfile, bakfile)
     os.chdir(td.name)
     patoolib.create_archive(newfile, ['.'])
-
-def cleanup():
+    os.chdir(wd)
     if newfile != currentfile:
         os.remove(currentfile)
-    if os.path.exists(savfile):
-        os.remove(savfile)
+    if os.path.exists(bakfile):
+        os.remove(bakfile)
 
-file_by_type()
+blacklist = os.path.abspath(os.path.dirname(__file__)) + '/blacklist.ini'
+parser = argparse.ArgumentParser(description='Convert digital comic books')
+parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
+parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
+parser.add_argument('-s', '--source', action='store', default='.', help='source directory')
+args = parser.parse_args()
+wd = os.path.abspath(args.source)
 
-## Scan for Suspicious files
-
-## Stats
-## Optionally Notify
+for f in os.scandir(wd):
+    if f.name.endswith(args.input):
+        td = tempfile.TemporaryDirectory()
+        comic, _ = os.path.splitext(f.name)
+        currentfile = os.path.join(wd, f.name)
+        extract_archive()
+        remove_blacklisted()
+        create_archive()
