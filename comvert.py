@@ -36,6 +36,18 @@ def create_archive(source, title, type_in, type_out, temp):
     if os.path.exists(bakfile):
         os.remove(bakfile)
 
+def repack_archive(path):
+    for f in os.scandir(path):
+        if f.name.endswith(args.input):
+            orig_name, _ = os.path.splitext(f.name)
+            curfile = os.path.join(path, orig_name + "." + args.input)
+            newfile = os.path.join(path, orig_name + "." + args.output)
+            if newfile == curfile:
+                print("Can't repack a file to the same format")
+                return
+            patoolib.repack_archive(curfile, newfile)
+            os.remove(curfile)
+
 def main(path):
     for f in os.scandir(path):
         if f.name.endswith(args.input):
@@ -51,5 +63,10 @@ parser = argparse.ArgumentParser(description='Convert digital comic books')
 parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
 parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
 parser.add_argument('-s', '--source', action='store', default='.', help='source directory')
+parser.add_argument('-p', '--preserve', action='store_true', help='Preserve archive')
 args = parser.parse_args()
-main(os.path.abspath(args.source))
+here = os.path.abspath(args.source)
+if args.preserve:
+    repack_archive(here)
+else:
+    main(here)
