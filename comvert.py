@@ -36,37 +36,39 @@ def create_archive(source, title, type_in, type_out, temp):
     if os.path.exists(bakfile):
         os.remove(bakfile)
 
-def repack_archive(path):
+def repack_archive(path, type_in, type_out):
     for f in os.scandir(path):
-        if f.name.endswith(args.input):
+        if f.name.endswith(type_in):
             orig_name, _ = os.path.splitext(f.name)
-            curfile = os.path.join(path, orig_name + "." + args.input)
-            newfile = os.path.join(path, orig_name + "." + args.output)
+            curfile = os.path.join(path, orig_name + "." + type_in)
+            newfile = os.path.join(path, orig_name + "." + type_out)
             if newfile == curfile:
                 print("Can't repack a file to the same format")
                 return
             patoolib.repack_archive(curfile, newfile)
             os.remove(curfile)
 
-def main(path):
+def main(path, type_in, type_out):
     for f in os.scandir(path):
-        if f.name.endswith(args.input):
+        if f.name.endswith(type_in):
             orig_temp = tempfile.TemporaryDirectory()
             orig_name, _ = os.path.splitext(f.name)
             orig_full = os.path.join(path, f.name)
             extract_archive(orig_full, orig_temp.name)
             remove_blacklisted(orig_temp.name)
-            create_archive(path, orig_name, args.input, args.output, orig_temp.name)
+            create_archive(path, orig_name, type_in, type_out, orig_temp.name)
 
 blacklist = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'blacklist.ini')
-parser = argparse.ArgumentParser(description='Convert digital comic books')
-parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
-parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
-parser.add_argument('-s', '--source', action='store', default='.', help='source directory')
-parser.add_argument('-p', '--preserve', action='store_true', help='Preserve archive')
-args = parser.parse_args()
-here = os.path.abspath(args.source)
-if args.preserve:
-    repack_archive(here)
-else:
-    main(here)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Convert digital comic books')
+    parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
+    parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
+    parser.add_argument('-s', '--source', action='store', default='.', help='source directory')
+    parser.add_argument('-p', '--preserve', action='store_true', help='Preserve archive')
+    args = parser.parse_args()
+    here = os.path.abspath(args.source)
+    if args.preserve:
+        repack_archive(here, args.input, args.output)
+    else:
+        main(here, args.input, args.output)
