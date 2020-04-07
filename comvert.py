@@ -62,7 +62,7 @@ blacklist = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'blacklist.
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert digital comic books')
-    parser.add_argument('-i', '--input', action='store', default='cbr', help='input by file type')
+    parser.add_argument('-i', '--input', action='store', default='cbr', help='input file type')
     parser.add_argument('-o', '--output', action='store', default='cbz', help='output file type')
     parser.add_argument('-s', '--source', action='store', default='.', help='source directory')
     parser.add_argument('-p', '--preserve', action='store_true', help='Preserve archive')

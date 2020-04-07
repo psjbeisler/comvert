@@ -10,7 +10,7 @@ Convert digital comic books
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUT, --input INPUT
-                        input by file type
+                        input file type
   -o OUTPUT, --output OUTPUT
                         output file type
   -s SOURCE, --source SOURCE
