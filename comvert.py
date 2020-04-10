@@ -61,7 +61,7 @@ def main(path, type_in, type_out):
 blacklist = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'blacklist.ini')
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert digital comic books')
+    parser = argparse.ArgumentParser(description='Convert digital comic books to different formats')
     parser.add_argument('-i', '--input', action='store', default='cbr', help='Input file type')
     parser.add_argument('-o', '--output', action='store', default='cbz', help='Output file type')
     parser.add_argument('-s', '--source', action='store', default='.', help='Source directory')

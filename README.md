@@ -5,7 +5,7 @@ A simple tool to batch convert digital Comic Books into different formats
 ```
 usage: comvert.py [-h] [-i INPUT] [-o OUTPUT] [-s SOURCE] [-p]
 
-Convert digital comic books
+Convert digital comic books to different formats
 
 optional arguments:
   -h, --help            show this help message and exit
